@@ -34,6 +34,7 @@ class Command {
   aliasNames: string[]
   /* Parsed command name */
   name: string
+  path: string[]
   args: CommandArg[]
   commandAction?: (...args: any[]) => any
   usageText?: string
@@ -51,6 +52,7 @@ class Command {
     this.options = []
     this.aliasNames = []
     this.name = removeBrackets(rawName)
+    this.path = this.name.split(' ')
     this.args = findAllBrackets(rawName)
     this.examples = []
   }
@@ -107,7 +109,14 @@ class Command {
    * Check if a command name is matched by this command
    * @param name Command name
    */
-  isMatched(name: string) {
+  isMatched(name: string | readonly string[]) {
+    if (this.path.length > 1) {
+      if (Array.isArray(name)) {
+        return this.path.every((part, i) => name[i] === part)
+      }
+    } else if (Array.isArray(name)) {
+      name = name[0]
+    }
     return this.name === name || this.aliasNames.includes(name)
   }
 

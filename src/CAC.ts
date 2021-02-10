@@ -185,15 +185,15 @@ class CAC extends EventEmitter {
     for (const command of this.commands) {
       const parsed = this.mri(argv.slice(2), command)
 
-      const commandName = parsed.args[0]
-      if (command.isMatched(commandName)) {
+      if (command.isMatched(parsed.args)) {
         shouldParse = false
         const parsedInfo = {
           ...parsed,
           args: parsed.args.slice(1),
         }
-        this.setParsedInfo(parsedInfo, command, commandName)
-        this.emit(`command:${commandName}`, command)
+        this.setParsedInfo(parsedInfo, command, command.name)
+        this.emit(`command:${command.name}`, command)
+        break
       }
     }
 
